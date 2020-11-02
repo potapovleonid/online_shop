@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <!--STOMP-->
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <!--bucket.js dependance: jquery-->
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/bucket.js"></script>
+
+    <title>Title</title>
+</head>
+<body>
+
+<table id="nav-menu" width="100%">
+    <td align="center">
+        <table>
+            <h2>Menu</h2>
+            <tr>
+                <td><a th:href="@{/}">Home</a></td>
+                <td><a th:href="@{/products}">Products</a></td>
+                <td sec:authorize="isAuthenticated()"><a th:href="@{/bucket}">Bucket</a></td>
+                <td sec:authorize="hasAnyAuthority('ADMIN' , 'SUPER_ADMIN')"><a th:href="@{/users}">Users</a></td>
+            </tr>
+        </table>
+    </td>
+    <td align="right">
+        <div sec:authorize="isAuthenticated()">
+            <div>
+                Hello, <a th:href="@{/users/profile}"><span sec:authentication="principal.username">Bob</span></a>
+            </div>
+            <div>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <div>
+                Hello. Please <a th:href="@{/login}">Login</a>
+            </div>
+        </div>
+        <div id="bucketinfo">
+<!--            bucket info             -->
+        </div>
+    </td>
+</table>
+
+</body>
+</html>

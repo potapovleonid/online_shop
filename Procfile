@@ -1,0 +1,1 @@
+web: java -jar target/Online_Shop-1.0-SNAPSHOT.jar
