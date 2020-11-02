@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+<div th:insert="~{integrated/header_menu :: #nav-menu}"></div>
+
+<form th:action="@{/users/profile}" th:object="${userdto}" method="post">
+    <table border="1">
+        <tr>
+            <td>Name</td>
+            <td><input type="text" readonly th:field="*{username}"></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><input type="email" th:field="*{email}"></td>
+        </tr>
+        <tr>
+            <td>Password</td>
+            <td><input type="password" th:field="*{password}"></td>
+        </tr>
+        <tr>
+            <td>Matching password</td>
+            <td><input type="password" th:field="*{matchPassword}"></td>
+        </tr>
+
+    </table>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
