@@ -19,4 +19,4 @@ values (6, 'Peach', 68.50);
 INSERT INTO products_tbl (product_id, title_fld, price_fld)
 values (7, 'Grapes', 185.75);
 
-ALTER SEQUENCE user_seq RESTART WITH 8;
+ALTER SEQUENCE product_seq RESTART WITH 8;

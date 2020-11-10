@@ -37,11 +37,8 @@
         </div>
         <div sec:authorize="!isAuthenticated()">
             <div>
-                Hello. Please <a th:href="@{/login}">Login</a>
+                Hello. Please <a th:href="@{/login}">Login</a> <br>or <a th:href="@{/users/register}">Register</a>
             </div>
-        </div>
-        <div id="bucketinfo">
-<!--            bucket info             -->
         </div>
     </td>
 </table>

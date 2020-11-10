@@ -34,10 +34,16 @@ public class UserController {
         return "user_new";
     }
 
+    @GetMapping("/register")
+    public String registration(Model model) {
+        model.addAttribute("user", new UserDTO());
+        return "register";
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
-    public String getUser(Model model, Principal principal){
-        if (principal == null){
+    public String getUser(Model model, Principal principal) {
+        if (principal == null) {
             throw new RuntimeException("You are not autorize");
         }
         User user = userService.findByName(principal.getName());
@@ -52,14 +58,14 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/profile")
-    public String updateProfile(Model model, Principal principal, UserDTO dto){
+    public String updateProfile(Model model, Principal principal, UserDTO dto) {
         if (principal == null ||
-        !Objects.equals(principal.getName(), dto.getUsername())) {
+                !Objects.equals(principal.getName(), dto.getUsername())) {
             throw new RuntimeException("You are not autorize");
         }
         if (dto.getPassword() != null
-        && !dto.getPassword().isEmpty()
-        && !Objects.equals(dto.getPassword(), dto.getMatchPassword())){
+                && !dto.getPassword().isEmpty()
+                && !Objects.equals(dto.getPassword(), dto.getMatchPassword())) {
             model.addAttribute("user", dto);
             return "/users/profile";
         }
@@ -69,12 +75,18 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated() and hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/new")
-    public String newUserAdd(Model model, UserDTO userDTO) {
-        if (userService.save(userDTO)){
+    public String newUserAdd(UserDTO userDTO) {
+        if (userService.save(userDTO)) {
             return "redirect:/users";
         } else {
             return "redirect:/users/new";
         }
+    }
+
+    @PostMapping("/register")
+    public String userRegister(UserDTO userDTO) {
+        userService.save(userDTO);
+        return "redirect:/users/register";
     }
 
     @PreAuthorize("isAuthenticated() and hasAuthority('SUPER_ADMIN')")
@@ -96,7 +108,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @GetMapping("/{id}/delete")
-    public void deleteUser(@PathVariable Long id){
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
     }
 
