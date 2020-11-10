@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
@@ -25,15 +25,6 @@ public class UserServiceImpl implements UserService{
     public UserServiceImpl(UserDAO userDAO, PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.passwordEncoder = passwordEncoder;
-//        initializeDB();
-    }
-
-    private void initializeDB() {
-        userDAO.saveAll(Arrays.asList(
-           new User(null, "Admin", passwordEncoder.encode("admin"), "admin@mail.ru", false, UserRole.ADMIN, null),
-           new User(null, "Leonid", passwordEncoder.encode("leonid"), "leonid@gmail.com", false, UserRole.SUPER_ADMIN, null),
-           new User(null, "Test", passwordEncoder.encode("test"), "test@gmail.com", false, UserRole.USER, null)
-        ));
     }
 
     @Override
@@ -43,17 +34,20 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean save(UserDTO userDTO) {
-        if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchPassword())){
-            throw new RuntimeException("password is not identical");
+        if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchPassword())) {
+            throw new RuntimeException("password is not identical <br><a th:href=\"@{/users/register}\">Back to register page</a>");
         }
-        User user = User.builder()
-                .name(userDTO.getUsername())
-                .password(passwordEncoder.encode(userDTO.getPassword()))
-                .email(userDTO.getEmail())
-                .role(UserRole.USER)
-                .build();
-        userDAO.save(user);
-        return true;
+        if (userDAO.findFirstByName(userDTO.getUsername()) == null) {
+            User user = User.builder()
+                    .name(userDTO.getUsername())
+                    .password(passwordEncoder.encode(userDTO.getPassword()))
+                    .email(userDTO.getEmail())
+                    .role(UserRole.USER)
+                    .build();
+            userDAO.save(user);
+            return true;
+        }
+        throw new RuntimeException("User with the given name already exists");
     }
 
     @Override
@@ -69,20 +63,20 @@ public class UserServiceImpl implements UserService{
     @Override
     public void update(UserDTO userDTO) {
         User updateUser = userDAO.findFirstByName(userDTO.getUsername());
-        if (updateUser == null){
+        if (updateUser == null) {
             throw new RuntimeException("User not found by name: " + userDTO.getUsername());
         }
 
         boolean changed = false;
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()){
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
             updateUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             changed = true;
         }
-        if (!Objects.equals(userDTO.getEmail(), updateUser.getEmail())){
+        if (!Objects.equals(userDTO.getEmail(), updateUser.getEmail())) {
             updateUser.setEmail(userDTO.getEmail());
             changed = true;
         }
-        if (changed){
+        if (changed) {
             userDAO.save(updateUser);
         }
     }
@@ -94,7 +88,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public boolean update(User user) {
-        if (user == null){
+        if (user == null) {
             throw new RuntimeException("Enter null user");
         }
         userDAO.save(user);
@@ -109,8 +103,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User findUser = userDAO.findFirstByName(s);
-        if (findUser == null){
-            throw  new UsernameNotFoundException("User not found with name: " + s);
+        if (findUser == null) {
+            throw new UsernameNotFoundException("User not found with name: " + s);
         }
 
         List<GrantedAuthority> roles = new ArrayList<>();
