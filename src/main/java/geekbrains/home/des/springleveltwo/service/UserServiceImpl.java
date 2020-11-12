@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean save(UserDTO userDTO) {
         if (!Objects.equals(userDTO.getPassword(), userDTO.getMatchPassword())) {
-            throw new RuntimeException("password is not identical <br><a th:href=\"@{/users/register}\">Back to register page</a>");
+            throw new RuntimeException("password is not identical");
         }
         if (userDAO.findFirstByName(userDTO.getUsername()) == null) {
             User user = User.builder()
